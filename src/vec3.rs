@@ -12,12 +12,16 @@ impl Vec3 {
     Vec3 { x: x, y: y, z: z }
   }
 
-  fn length_squared(self) -> f32 {
+  pub fn length_squared(&self) -> f32 {
     self.x * self.x + self.y * self.y + self.z * self.z
   }
 
-  fn length(self) -> f32 {
+  pub fn length(&self) -> f32 {
     self.length_squared().sqrt()
+  }
+
+  pub fn dot(&self, other: Vec3) -> f32 {
+    self.x * other.x + self.y * other.y + self.z * other.z
   }
 }
 
