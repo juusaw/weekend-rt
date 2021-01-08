@@ -20,23 +20,32 @@ fn log_end() {
     io::stderr().write(b"\n").unwrap();
 }
 
-fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> bool {
+fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> Option<f32> {
     let oc = ray.o - center;
     let a = ray.dir.dot(ray.dir);
     let b = 2.0 * oc.dot(ray.dir);
     let c = oc.dot(oc) - radius * radius;
     let discriminant = b * b - 4.0 * a * c;
-    discriminant > 0.0
+    if discriminant > 0.0 {
+        Some((-1.0 * b - discriminant.sqrt()) / 2.0 * a)
+    } else {
+        None
+    }
 }
 
 
 fn ray_color(r: &Ray) -> Vec3 {
-    if hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, r) {
-        return Vec3::new(1.0, 0.0, 0.0);
+    match hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, r) {
+        None => {
+            let unit_direction = unit_vector(r.dir);
+            let t = 0.5 * (unit_direction.y + 1.0);
+            (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
+        }
+        Some(t) => {
+            let n = unit_vector(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
+            0.5 * (n + 1.0)
+        }
     }
-    let unit_direction = unit_vector(r.dir);
-    let t = 0.5 * (unit_direction.y + 1.0);
-    (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
 }
 
 fn main() {
