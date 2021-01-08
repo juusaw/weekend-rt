@@ -6,7 +6,10 @@ use crate::ray::Ray;
 use crate::vec3::{unit_vector, Vec3};
 
 mod color;
+mod hittable;
+mod hittable_list;
 mod ray;
+mod sphere;
 mod vec3;
 
 fn log_progress(progress: i64) {
