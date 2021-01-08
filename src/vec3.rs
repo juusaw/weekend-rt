@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub, Div, Mul};
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
@@ -29,7 +29,11 @@ impl Add<Vec3> for Vec3 {
   type Output = Self;
 
   fn add(self, other: Self) -> Self {
-      Self {x: self.x + other.x, y: self.y + other.y, z: self.z + other.z}
+    Self {
+      x: self.x + other.x,
+      y: self.y + other.y,
+      z: self.z + other.z,
+    }
   }
 }
 
@@ -37,7 +41,11 @@ impl Add<f32> for Vec3 {
   type Output = Self;
 
   fn add(self, other: f32) -> Self {
-      Self {x: self.x + other, y: self.y + other, z: self.z + other}
+    Self {
+      x: self.x + other,
+      y: self.y + other,
+      z: self.z + other,
+    }
   }
 }
 
@@ -45,16 +53,23 @@ impl Sub<Vec3> for Vec3 {
   type Output = Self;
 
   fn sub(self, other: Self) -> Self {
-      Self {x: self.x - other.x, y: self.y - other.y, z: self.z - other.z}
+    Self {
+      x: self.x - other.x,
+      y: self.y - other.y,
+      z: self.z - other.z,
+    }
   }
 }
-
 
 impl Sub<f32> for Vec3 {
   type Output = Self;
 
   fn sub(self, other: f32) -> Self {
-      Self {x: self.x - other, y: self.y - other, z: self.z - other}
+    Self {
+      x: self.x - other,
+      y: self.y - other,
+      z: self.z - other,
+    }
   }
 }
 
@@ -62,7 +77,11 @@ impl Mul<f32> for Vec3 {
   type Output = Self;
 
   fn mul(self, other: f32) -> Self {
-      Self {x: self.x * other, y: self.y * other, z: self.z * other}
+    Self {
+      x: self.x * other,
+      y: self.y * other,
+      z: self.z * other,
+    }
   }
 }
 
@@ -70,7 +89,11 @@ impl Mul<Vec3> for f32 {
   type Output = Vec3;
 
   fn mul(self, other: Vec3) -> Vec3 {
-      Vec3 {x: other.x * self, y: other.y * self, z: other.z * self}
+    Vec3 {
+      x: other.x * self,
+      y: other.y * self,
+      z: other.z * self,
+    }
   }
 }
 
@@ -78,7 +101,11 @@ impl Div<f32> for Vec3 {
   type Output = Self;
 
   fn div(self, other: f32) -> Self {
-      Self {x: self.x / other, y: self.y / other, z: self.z / other}
+    Self {
+      x: self.x / other,
+      y: self.y / other,
+      z: self.z / other,
+    }
   }
 }
 

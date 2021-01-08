@@ -1,13 +1,13 @@
 use std::io;
 use std::io::Write;
 
-use crate::vec3::{Vec3, unit_vector};
 use crate::color::write_color;
 use crate::ray::Ray;
+use crate::vec3::{unit_vector, Vec3};
 
 mod color;
-mod vec3;
 mod ray;
+mod vec3;
 
 fn log_progress(progress: i64) {
     io::stderr()
@@ -32,7 +32,6 @@ fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> Option<f32> {
         None
     }
 }
-
 
 fn ray_color(r: &Ray) -> Vec3 {
     match hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, r) {
@@ -60,7 +59,8 @@ fn main() {
     let origin = Vec3::new(0.0, 0.0, 0.0);
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
+    let lower_left_corner =
+        origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
 
     println!("P3");
     println!("{} {} 255", width, height);
@@ -76,7 +76,10 @@ fn main() {
             let u = i_f / (w - 1.0);
             let v = j_f / (h - 1.0);
 
-            let r = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+            let r = Ray::new(
+                origin,
+                lower_left_corner + u * horizontal + v * vertical - origin,
+            );
             let c = ray_color(&r);
 
             write_color(c);
