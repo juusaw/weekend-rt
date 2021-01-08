@@ -1,3 +1,6 @@
+use crate::hittable::Hittable;
+use crate::hittable_list::HittableList;
+use crate::sphere::Sphere;
 use std::io;
 use std::io::Write;
 
@@ -23,29 +26,13 @@ fn log_end() {
     io::stderr().write(b"\n").unwrap();
 }
 
-fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> Option<f32> {
-    let oc = ray.o - center;
-    let a = ray.dir.length_squared();
-    let b_half = oc.dot(ray.dir);
-    let c = oc.length_squared() - radius * radius;
-    let discriminant = b_half * b_half - a * c;
-    if discriminant > 0.0 {
-        Some((-1.0 * b_half - discriminant.sqrt()) / a)
-    } else {
-        None
-    }
-}
-
-fn ray_color(r: &Ray) -> Vec3 {
-    match hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, r) {
+fn ray_color(r: &Ray, world: &Box<dyn Hittable>) -> Vec3 {
+    match world.hit(r, 0.0, 10000.0) {
+        Some(h) => 0.5 * (h.normal + Vec3::new(1.0, 1.0, 1.0)),
         None => {
             let unit_direction = unit_vector(r.dir);
             let t = 0.5 * (unit_direction.y + 1.0);
             (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
-        }
-        Some(t) => {
-            let n = unit_vector(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
-            0.5 * (n + 1.0)
         }
     }
 }
@@ -59,6 +46,11 @@ fn main() {
     let viewport_width = aspect_ratio * viewport_height;
     let focal_length = 1.0;
 
+    let mut world = HittableList::new();
+
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
+
     let origin = Vec3::new(0.0, 0.0, 0.0);
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
@@ -67,6 +59,9 @@ fn main() {
 
     println!("P3");
     println!("{} {} 255", width, height);
+
+    let bw: Box<dyn Hittable> = Box::new(world);
+
     for j in (0..height).rev() {
         log_progress(height - j);
         for i in 0..width {
@@ -83,7 +78,7 @@ fn main() {
                 origin,
                 lower_left_corner + u * horizontal + v * vertical - origin,
             );
-            let c = ray_color(&r);
+            let c = ray_color(&r, &bw);
 
             write_color(c);
         }
