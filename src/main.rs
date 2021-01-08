@@ -22,12 +22,12 @@ fn log_end() {
 
 fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> Option<f32> {
     let oc = ray.o - center;
-    let a = ray.dir.dot(ray.dir);
-    let b = 2.0 * oc.dot(ray.dir);
-    let c = oc.dot(oc) - radius * radius;
-    let discriminant = b * b - 4.0 * a * c;
+    let a = ray.dir.length_squared();
+    let b_half = oc.dot(ray.dir);
+    let c = oc.length_squared() - radius * radius;
+    let discriminant = b_half * b_half - a * c;
     if discriminant > 0.0 {
-        Some((-1.0 * b - discriminant.sqrt()) / 2.0 * a)
+        Some((-1.0 * b_half - discriminant.sqrt()) / a)
     } else {
         None
     }
