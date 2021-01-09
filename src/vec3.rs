@@ -12,6 +12,14 @@ impl Vec3 {
     Vec3 { x: x, y: y, z: z }
   }
 
+  pub fn random() -> Vec3 {
+    Vec3 {
+      x: rand::random::<f32>(),
+      y: rand::random::<f32>(),
+      z: rand::random::<f32>(),
+    }
+  }
+
   pub fn length_squared(&self) -> f32 {
     self.x * self.x + self.y * self.y + self.z * self.z
   }
@@ -111,4 +119,15 @@ impl Div<f32> for Vec3 {
 
 pub fn unit_vector(v: Vec3) -> Vec3 {
   v / v.length()
+}
+
+pub fn random_in_unit_sphere() -> Vec3 {
+  loop {
+    // Random vec between -1 and 1
+    let p = 2.0 * Vec3::random() - 1.0;
+    if p.length_squared() >= 1.0 {
+      continue;
+    }
+    return p;
+  }
 }
