@@ -1,6 +1,8 @@
+use crate::camera::Camera;
 use crate::hittable::Hittable;
 use crate::hittable_list::HittableList;
 use crate::sphere::Sphere;
+use rand::Rng;
 use std::io;
 use std::io::Write;
 
@@ -8,6 +10,7 @@ use crate::color::write_color;
 use crate::ray::Ray;
 use crate::vec3::{unit_vector, Vec3};
 
+mod camera;
 mod color;
 mod hittable;
 mod hittable_list;
@@ -38,24 +41,19 @@ fn ray_color(r: &Ray, world: &Box<dyn Hittable>) -> Vec3 {
 }
 
 fn main() {
+    let samples_per_px = 100;
+    let mut rng = rand::thread_rng();
+
     let aspect_ratio = 16.0 / 9.0;
     let width = 400;
     let height = (width as f32 / aspect_ratio) as i64;
 
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
+    let camera = Camera::new(aspect_ratio);
 
     let mut world = HittableList::new();
 
     world.add(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
     world.add(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
-
-    let origin = Vec3::new(0.0, 0.0, 0.0);
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
 
     println!("P3");
     println!("{} {} 255", width, height);
@@ -65,22 +63,16 @@ fn main() {
     for j in (0..height).rev() {
         log_progress(height - j);
         for i in 0..width {
-            let w = width as f32;
-            let h = height as f32;
-
-            let i_f = i as f32;
-            let j_f = j as f32;
-
-            let u = i_f / (w - 1.0);
-            let v = j_f / (h - 1.0);
-
-            let r = Ray::new(
-                origin,
-                lower_left_corner + u * horizontal + v * vertical - origin,
-            );
-            let c = ray_color(&r, &bw);
-
-            write_color(c);
+            let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
+            for _ in 0..samples_per_px {
+                let r_i: f32 = rng.gen();
+                let r_j: f32 = rng.gen();
+                let u = (i as f32 + r_i) / (width - 1) as f32;
+                let v = (j as f32 + r_j) / (height - 1) as f32;
+                let ray = camera.get_ray(u, v);
+                pixel_color = pixel_color + ray_color(&ray, &bw);
+            }
+            write_color(pixel_color / samples_per_px as f32);
         }
     }
     log_end();
