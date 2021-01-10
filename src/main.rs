@@ -62,8 +62,8 @@ fn main() {
 
     let material_ground = Material::new(Lambertian, Vec3::new(0.8, 0.8, 0.0));
     let material_center = Material::new(Lambertian, Vec3::new(0.7, 0.3, 0.3));
-    let material_left = Material::new(Metal, Vec3::new(0.8, 0.8, 0.8));
-    let material_right = Material::new(Metal, Vec3::new(0.8, 0.6, 0.2));
+    let material_left = Material::new(Metal(0.3), Vec3::new(0.8, 0.8, 0.8));
+    let material_right = Material::new(Metal(1.0), Vec3::new(0.8, 0.6, 0.2));
 
     world.add(Box::new(Sphere::new(
         Vec3::new(0.0, -100.5, -1.0),

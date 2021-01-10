@@ -7,7 +7,7 @@ use crate::Vec3;
 #[derive(Debug, Copy, Clone)]
 pub enum MaterialKind {
   Lambertian,
-  Metal,
+  Metal(f32),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -38,9 +38,9 @@ impl Material {
         let scattered = Ray::new(hr.p, scatter_direction);
         (Some(scattered), self.color)
       }
-      MaterialKind::Metal => {
+      MaterialKind::Metal(fuzz) => {
         let reflected = reflect(unit_vector(ray.dir), hr.normal);
-        let scattered = Ray::new(hr.p, reflected);
+        let scattered = Ray::new(hr.p, reflected + fuzz * random_in_unit_sphere());
         (
           if scattered.dir.dot(hr.normal) > 0.0 {
             Some(scattered)
