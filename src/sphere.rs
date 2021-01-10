@@ -1,18 +1,21 @@
 use crate::hittable::HitRecord;
 use crate::hittable::Hittable;
+use crate::material::Material;
 use crate::Ray;
 use crate::Vec3;
 
 pub struct Sphere {
   pub center: Vec3,
   pub radius: f32,
+  pub material: Material,
 }
 
 impl Sphere {
-  pub fn new(center: Vec3, radius: f32) -> Sphere {
+  pub fn new(center: Vec3, radius: f32, material: Material) -> Sphere {
     Sphere {
       center: center,
       radius: radius,
+      material: material,
     }
   }
 }
@@ -46,6 +49,7 @@ impl Hittable for Sphere {
       t: h_t,
       p: h_p,
       normal: h_normal,
+      material: self.material,
     });
   }
 }

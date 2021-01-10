@@ -1,3 +1,4 @@
+use crate::Material;
 use crate::Ray;
 use crate::Vec3;
 
@@ -6,6 +7,7 @@ pub struct HitRecord {
   pub p: Vec3,
   pub normal: Vec3,
   pub t: f32,
+  pub material: Material,
 }
 
 pub trait Hittable {

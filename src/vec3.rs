@@ -31,6 +31,11 @@ impl Vec3 {
   pub fn dot(&self, other: Vec3) -> f32 {
     self.x * other.x + self.y * other.y + self.z * other.z
   }
+
+  pub fn near_zero(&self) -> bool {
+    const S: f32 = 1e-8;
+    return ((self.x.abs()) < S) && (self.y.abs() < S) && (self.z.abs() < S);
+  }
 }
 
 impl Add<Vec3> for Vec3 {
@@ -77,6 +82,18 @@ impl Sub<f32> for Vec3 {
       x: self.x - other,
       y: self.y - other,
       z: self.z - other,
+    }
+  }
+}
+
+impl Mul<Vec3> for Vec3 {
+  type Output = Self;
+
+  fn mul(self, other: Vec3) -> Self {
+    Self {
+      x: self.x * other.x,
+      y: self.y * other.y,
+      z: self.z * other.z,
     }
   }
 }
