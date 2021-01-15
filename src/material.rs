@@ -28,6 +28,12 @@ fn refract(uv: Vec3, n: Vec3, etai_over_etat: f32) -> Vec3 {
   r_out_perp + r_out_parallel
 }
 
+fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
+  // Schlick's approximation
+  let r0 = ((1.0 - ref_idx) / (1.0 + ref_idx)).powi(2);
+  return r0 + (1.0 - r0) * (1.0 - cosine).powi(5);
+}
+
 impl Material {
   pub fn new(kind: MaterialKind, color: Vec3) -> Material {
     Material {
@@ -67,11 +73,12 @@ impl Material {
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
-        let direction = if cannot_refract {
-          reflect(unit_direction, hr.normal)
-        } else {
-          refract(unit_direction, hr.normal, refraction_ratio)
-        };
+        let direction =
+          if cannot_refract || reflectance(cos_theta, refraction_ratio) > rand::random::<f32>() {
+            reflect(unit_direction, hr.normal)
+          } else {
+            refract(unit_direction, hr.normal, refraction_ratio)
+          };
 
         let scattered = Ray::new(hr.p, direction);
 
