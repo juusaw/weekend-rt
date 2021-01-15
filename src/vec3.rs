@@ -20,21 +20,29 @@ impl Vec3 {
     }
   }
 
+  pub fn dot(&self, other: Vec3) -> f32 {
+    self.x * other.x + self.y * other.y + self.z * other.z
+  }
+
   pub fn length_squared(&self) -> f32 {
-    self.x * self.x + self.y * self.y + self.z * self.z
+    self.dot(*self)
   }
 
   pub fn length(&self) -> f32 {
     self.length_squared().sqrt()
   }
 
-  pub fn dot(&self, other: Vec3) -> f32 {
-    self.x * other.x + self.y * other.y + self.z * other.z
-  }
-
   pub fn near_zero(&self) -> bool {
     const S: f32 = 1e-8;
     return ((self.x.abs()) < S) && (self.y.abs() < S) && (self.z.abs() < S);
+  }
+
+  pub fn sqrt(&self) -> Vec3 {
+    Vec3 {
+      x: self.x.sqrt(),
+      y: self.y.sqrt(),
+      z: self.z.sqrt(),
+    }
   }
 }
 

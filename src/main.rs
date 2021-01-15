@@ -3,6 +3,7 @@ use crate::color::write_color;
 use crate::hittable::Hittable;
 use crate::hittable_list::HittableList;
 use crate::material::Material;
+use crate::material::MaterialKind::Dielectric;
 use crate::material::MaterialKind::Lambertian;
 use crate::material::MaterialKind::Metal;
 use crate::ray::Ray;
@@ -62,7 +63,7 @@ fn main() {
 
     let material_ground = Material::new(Lambertian, Vec3::new(0.8, 0.8, 0.0));
     let material_center = Material::new(Lambertian, Vec3::new(0.7, 0.3, 0.3));
-    let material_left = Material::new(Metal(0.3), Vec3::new(0.8, 0.8, 0.8));
+    let material_left = Material::new(Dielectric(1.5), Vec3::new(0.8, 0.8, 0.8));
     let material_right = Material::new(Metal(1.0), Vec3::new(0.8, 0.6, 0.2));
 
     world.add(Box::new(Sphere::new(

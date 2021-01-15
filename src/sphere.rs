@@ -1,3 +1,4 @@
+use crate::hittable::get_face_normal;
 use crate::hittable::HitRecord;
 use crate::hittable::Hittable;
 use crate::material::Material;
@@ -43,13 +44,16 @@ impl Hittable for Sphere {
 
     let h_t = root;
     let h_p = ray.at(h_t);
-    let h_normal = (h_p - self.center) / self.radius;
+    let outward_normal = (h_p - self.center) / self.radius;
 
-    return Some(HitRecord {
+    let (front_face, normal) = get_face_normal(ray, outward_normal);
+
+    Some(HitRecord {
       t: h_t,
       p: h_p,
-      normal: h_normal,
       material: self.material,
-    });
+      normal,
+      front_face,
+    })
   }
 }
