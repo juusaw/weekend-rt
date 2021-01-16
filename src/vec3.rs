@@ -164,3 +164,15 @@ pub fn random_in_unit_sphere() -> Vec3 {
     return p;
   }
 }
+
+pub fn random_in_unit_disk() -> Vec3 {
+  loop {
+    let x = rand::random::<f32>() * 2.0 - 1.0;
+    let y = rand::random::<f32>() * 2.0 - 1.0;
+    let p = Vec3::new(x, y, 0.0);
+    if p.length_squared() >= 1.0 {
+      continue;
+    };
+    return p;
+  }
+}

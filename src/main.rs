@@ -1,12 +1,9 @@
 use crate::camera::Camera;
 use crate::color::write_color;
 use crate::hittable::Hittable;
-use crate::hittable_list::HittableList;
 use crate::material::Material;
-use crate::material::MaterialKind::Dielectric;
-use crate::material::MaterialKind::Lambertian;
-use crate::material::MaterialKind::Metal;
 use crate::ray::Ray;
+use crate::scene::get_scene;
 use crate::sphere::Sphere;
 use crate::vec3::{unit_vector, Vec3};
 use std::io;
@@ -20,6 +17,7 @@ mod hittable;
 mod hittable_list;
 mod material;
 mod ray;
+mod scene;
 mod sphere;
 mod vec3;
 
@@ -56,53 +54,29 @@ fn ray_color(r: &Ray, world: &Box<dyn Hittable>, depth: i64) -> Vec3 {
 fn main() {
     let start = Instant::now();
 
-    let samples_per_px = 100;
+    let aspect_ratio = 3.0 / 2.0;
+    let width = 1200;
+    let height = (width as f32 / aspect_ratio as f32) as i64;
+    let samples_per_px = 500;
     let max_depth = 50;
 
-    let aspect_ratio = 16.0 / 9.0;
-    let width = 450;
-    let height = (width as f32 / aspect_ratio) as i64;
+    let world = get_scene();
+
+    let lookfrom = Vec3::new(13.0, 2.0, 3.0);
+    let lookat = Vec3::new(0.0, 0.0, 0.0);
+    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.1;
 
     let camera = Camera::new(
-        Vec3::new(-2.0, 2.0, 1.0),
-        Vec3::new(0.0, 0.0, -1.0),
-        Vec3::new(0.0, 1.0, 0.0),
+        lookfrom,
+        lookat,
+        vup,
         20.0,
         aspect_ratio,
+        aperture,
+        dist_to_focus,
     );
-
-    let mut world = HittableList::new();
-
-    let material_ground = Material::new(Lambertian, Vec3::new(0.8, 0.8, 0.0));
-    let material_center = Material::new(Lambertian, Vec3::new(0.7, 0.3, 0.3));
-    let material_left = Material::new(Dielectric(1.5), Vec3::new(0.8, 0.8, 0.8));
-    let material_right = Material::new(Metal(1.0), Vec3::new(0.8, 0.6, 0.2));
-
-    world.add(Box::new(Sphere::new(
-        Vec3::new(0.0, -100.5, -1.0),
-        100.0,
-        material_ground,
-    )));
-    world.add(Box::new(Sphere::new(
-        Vec3::new(0.0, 0.0, -1.0),
-        0.5,
-        material_center,
-    )));
-    world.add(Box::new(Sphere::new(
-        Vec3::new(-1.0, 0.0, -1.0),
-        0.5,
-        material_left,
-    )));
-    world.add(Box::new(Sphere::new(
-        Vec3::new(-1.0, 0.0, -1.0),
-        -0.4,
-        material_left,
-    )));
-    world.add(Box::new(Sphere::new(
-        Vec3::new(1.0, 0.0, -1.0),
-        0.5,
-        material_right,
-    )));
 
     println!("P3");
     println!("{} {} 255", width, height);
