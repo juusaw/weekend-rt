@@ -57,7 +57,13 @@ fn main() {
     let width = 450;
     let height = (width as f32 / aspect_ratio) as i64;
 
-    let camera = Camera::new(aspect_ratio);
+    let camera = Camera::new(
+        Vec3::new(-2.0, 2.0, 1.0),
+        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        20.0,
+        aspect_ratio,
+    );
 
     let mut world = HittableList::new();
 
@@ -79,6 +85,11 @@ fn main() {
     world.add(Box::new(Sphere::new(
         Vec3::new(-1.0, 0.0, -1.0),
         0.5,
+        material_left,
+    )));
+    world.add(Box::new(Sphere::new(
+        Vec3::new(-1.0, 0.0, -1.0),
+        -0.4,
         material_left,
     )));
     world.add(Box::new(Sphere::new(
