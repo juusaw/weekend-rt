@@ -11,6 +11,8 @@ use crate::sphere::Sphere;
 use crate::vec3::{unit_vector, Vec3};
 use std::io;
 use std::io::Write;
+use std::time::Duration;
+use std::time::Instant;
 
 mod camera;
 mod color;
@@ -28,8 +30,10 @@ fn log_progress(progress: i64) {
     io::stderr().flush().unwrap();
 }
 
-fn log_end() {
-    io::stderr().write(b"\n").unwrap();
+fn log_end(elapsed: Duration) {
+    io::stderr()
+        .write(format!("\nFinished in {:?}\n", elapsed).as_bytes())
+        .unwrap();
 }
 
 fn ray_color(r: &Ray, world: &Box<dyn Hittable>, depth: i64) -> Vec3 {
@@ -50,6 +54,8 @@ fn ray_color(r: &Ray, world: &Box<dyn Hittable>, depth: i64) -> Vec3 {
 }
 
 fn main() {
+    let start = Instant::now();
+
     let samples_per_px = 100;
     let max_depth = 50;
 
@@ -118,5 +124,6 @@ fn main() {
             write_color(pixel_color, samples_per_px);
         }
     }
-    log_end();
+    let duration = start.elapsed();
+    log_end(duration);
 }
