@@ -6,6 +6,7 @@ use crate::ray::Ray;
 use crate::scene::get_scene;
 use crate::sphere::Sphere;
 use crate::vec3::{unit_vector, Vec3};
+use rayon::prelude::*;
 use std::io;
 use std::io::Write;
 use std::time::Duration;
@@ -34,7 +35,7 @@ fn log_end(elapsed: Duration) {
         .unwrap();
 }
 
-fn ray_color(r: &Ray, world: &Box<dyn Hittable>, depth: i64) -> Vec3 {
+fn ray_color(r: &Ray, world: &Box<dyn Hittable + Sync>, depth: i64) -> Vec3 {
     if depth <= 0 {
         return Vec3::new(0.0, 0.0, 0.0);
     };
@@ -81,20 +82,23 @@ fn main() {
     println!("P3");
     println!("{} {} 255", width, height);
 
-    let bw: Box<dyn Hittable> = Box::new(world);
+    let bw: Box<dyn Hittable + Sync> = Box::new(world);
 
     for j in (0..height).rev() {
         log_progress(height - j);
+
         for i in 0..width {
-            let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-            for _ in 0..samples_per_px {
-                let r_i = rand::random::<f32>();
-                let r_j = rand::random::<f32>();
-                let u = (i as f32 + r_i) / (width - 1) as f32;
-                let v = (j as f32 + r_j) / (height - 1) as f32;
-                let ray = camera.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(&ray, &bw, max_depth);
-            }
+            let pixel_color = (0..samples_per_px)
+                .into_par_iter()
+                .map(|_| {
+                    let r_i = rand::random::<f32>();
+                    let r_j = rand::random::<f32>();
+                    let u = (i as f32 + r_i) / (width - 1) as f32;
+                    let v = (j as f32 + r_j) / (height - 1) as f32;
+                    let ray = camera.get_ray(u, v);
+                    ray_color(&ray, &bw, max_depth)
+                })
+                .reduce(|| Vec3::new(0.0, 0.0, 0.0), |a, b| a + b);
             write_color(pixel_color, samples_per_px);
         }
     }
