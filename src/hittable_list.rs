@@ -3,7 +3,7 @@ use crate::hittable::Hittable;
 use crate::Ray;
 
 pub struct HittableList {
-  pub objects: Vec<Box<dyn Hittable>>,
+  pub objects: Vec<Box<dyn Hittable + Sync>>,
 }
 
 impl HittableList {
@@ -13,7 +13,7 @@ impl HittableList {
     }
   }
 
-  pub fn add(&mut self, h: Box<dyn Hittable>) {
+  pub fn add(&mut self, h: Box<dyn Hittable + Sync>) {
     self.objects.push(h)
   }
 }
