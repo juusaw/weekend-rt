@@ -28,8 +28,8 @@ impl Hittable for HittableList {
       match hit {
         Some(ht) => {
           if ht.t < closest_t {
-            h = hit;
             closest_t = ht.t;
+            h = Some(ht);
           }
         }
         None => {}
