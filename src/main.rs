@@ -1,6 +1,6 @@
 use crate::camera::Camera;
 use crate::color::write_color;
-use crate::hittable::Hittable;
+use crate::hittable_list::HittableObject;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::scene::get_scene;
@@ -35,7 +35,7 @@ fn log_end(elapsed: Duration) {
         .unwrap();
 }
 
-fn ray_color(r: &Ray, world: &Box<dyn Hittable + Sync>, depth: i64) -> Vec3 {
+fn ray_color(r: &Ray, world: &HittableObject, depth: i64) -> Vec3 {
     if depth <= 0 {
         return Vec3::new(0.0, 0.0, 0.0);
     };
@@ -82,7 +82,7 @@ fn main() {
     println!("P3");
     println!("{} {} 255", width, height);
 
-    let bw: Box<dyn Hittable + Sync> = Box::new(world);
+    let bw: HittableObject = Box::new(world);
 
     for j in (0..height).rev() {
         log_progress(height - j);
